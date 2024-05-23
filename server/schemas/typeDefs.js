@@ -19,12 +19,6 @@ const User = `
     token:ID!
     user:User
   }
-
-  type Query {
-    me: Auth
-  
-  }
-
   input BooKType{
     description: String!
     bookId: String!
@@ -32,6 +26,12 @@ const User = `
     link: title
     authors: [String]
   }
+
+  type Query {
+    me: Auth
+  
+  }
+
 
   type Mutation {
     createUser(username: String!, email: String!, password: String!): Auth

@@ -1,29 +1,71 @@
-const { Tech, Matchup } = require('../models');
+const { User } = require('../models');
+const { signToken, AuthenticationError } = require('../utils/auth');
+
 
 const resolvers = {
   Query: {
-    tech: async () => {
-      return Tech.find({});
+    me: async (parent,args,context) => {
+      if(context.user){
+
+        return User.find({});
+      }
+      throw AuthenticationError
     },
-    matchups: async (parent, { _id }) => {
-      const params = _id ? { _id } : {};
-      return Matchup.find(params);
-    },
+   
   },
   Mutation: {
-    createMatchup: async (parent, args) => {
-      const matchup = await Matchup.create(args);
-      return matchup;
+    createUser: async (parent, args) => {
+      const userData = await User.create(args);
+      const token = signToken(userData);
+      return { token, userData };
     },
-    createVote: async (parent, { _id, techNum }) => {
-      const vote = await Matchup.findOneAndUpdate(
-        { _id },
-        { $inc: { [`tech${techNum}_votes`]: 1 } },
-        { new: true }
-      );
-      return vote;
+    addBook: async (parent, { bookType },context) => {
+      if(context.user){
+
+        const updateBooks = await User.findOneAndUpdate(
+          { _id:AudioContext.user._id },
+          { $push:{savedBooks:bookType} },
+          { new: true }
+        );
+        return vote;
+      }
+      throw AuthenticationError
     },
+
+    login: async (parent, {email, password} ) => {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw AuthenticationError;
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw AuthenticationError;
+      }
+
+      const token = signToken(user);
+
+      return { token, user };
+    
+    },
+
+    removeBook: async (parent, { bookId },context) => {
+      if(context.user){
+
+        const updateBooks = await User.findOneAndUpdate(
+          { _id:AudioContext.user._id },
+          { $pull:{savedBooks:{bookId:bookId}} },
+          { new: true }
+        );
+        return vote;
+      }
+      throw AuthenticationError
+    },
+
   },
+
 };
 
 module.exports = resolvers;
