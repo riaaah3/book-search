@@ -1,4 +1,4 @@
-const User = `
+const typeDefs = `
   type User {
     _id: ID!
     username: String!
@@ -8,24 +8,20 @@ const User = `
 
   type Book {
     _id: ID!
-    description: String!
+    description: String
     bookId: String!
-    image: String!
-    link: title
+    image: String
+    link: String
     authors: [String]
+    title:String!
   }
 
   type Auth{
     token:ID!
     user:User
   }
-  input BooKType{
-    description: String!
-    bookId: String!
-    image: String!
-    link: title
-    authors: [String]
-  }
+
+ 
 
   type Query {
     me: Auth
@@ -36,10 +32,27 @@ const User = `
   type Mutation {
     createUser(username: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
-    addBook(bookType:BookType):User
+    addBook(
+      description: String,
+      bookId: String!,
+      image: String,
+      link: String,
+      authors: [String],
+      title: String!
+    ):User
     removeBook(bookId: String!):User
   }
 `;
 
 
 module.exports = typeDefs;
+
+
+// input BooKInput{
+//   description: String
+//   bookId: String!
+//   image: String
+//   link: String
+//   authors: [String]
+//   title: String!
+// }

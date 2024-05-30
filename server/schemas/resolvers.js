@@ -4,14 +4,14 @@ const { signToken, AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    me: async (parent,args,context) => {
-      if(context.user){
+    me: async (parent, args, context) => {
+      if (context.user) {
 
         return User.find({});
       }
       throw AuthenticationError
     },
-   
+
   },
   Mutation: {
     createUser: async (parent, args) => {
@@ -19,12 +19,12 @@ const resolvers = {
       const token = signToken(userData);
       return { token, userData };
     },
-    addBook: async (parent, { bookType },context) => {
-      if(context.user){
+    addBook: async (parent, args, context) => {
+      if (context.user) {
 
         const updateBooks = await User.findOneAndUpdate(
-          { _id:AudioContext.user._id },
-          { $push:{savedBooks:bookType} },
+          { _id: context.user._id },
+          { $push: { savedBooks: { ...args } } },
           { new: true }
         );
         return vote;
@@ -32,7 +32,7 @@ const resolvers = {
       throw AuthenticationError
     },
 
-    login: async (parent, {email, password} ) => {
+    login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
 
       if (!user) {
@@ -48,15 +48,15 @@ const resolvers = {
       const token = signToken(user);
 
       return { token, user };
-    
+
     },
 
-    removeBook: async (parent, { bookId },context) => {
-      if(context.user){
+    removeBook: async (parent, { bookId }, context) => {
+      if (context.user) {
 
         const updateBooks = await User.findOneAndUpdate(
-          { _id:AudioContext.user._id },
-          { $pull:{savedBooks:{bookId:bookId}} },
+          { _id: context.user._id },
+          { $pull: { savedBooks: { bookId: bookId } } },
           { new: true }
         );
         return vote;
