@@ -9,7 +9,7 @@ const typeDefs = `
   type Book {
     _id: ID!
     description: String
-    bookId: String!
+    bookId: ID!
     image: String
     link: String
     authors: [String]
@@ -40,7 +40,7 @@ const typeDefs = `
       authors: [String],
       title: String!
     ):User
-    removeBook(bookId: String!):User
+    removeBook(bookId: ID!):User
   }
 `;
 
